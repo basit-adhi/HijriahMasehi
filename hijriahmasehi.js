@@ -35,7 +35,8 @@ function Hijriah2MasehiUrfi(hijritanggal, hijribulan, hijritahun)
    var tahunmatahari, hb;
    var masehi = {tanggal:0, bulan:0, tahun:1};
    //menghitung hijritahun
-   hijritahun--;   
+   hijritahun--;
+   hijribulan--;   
    hariBULAN.daur                = Math.floor(hijritahun / 30) * usiaBulan30Tahun;
    tahunSisaDaurBULAN            = hijritahun % 30;
    hariBULAN.sisadaur_kabisat    = jumlahKabisatBULAN(tahunSisaDaurBULAN) * 355;
@@ -93,7 +94,7 @@ function Masehi2HijriahUrfi(masehitanggal, masehibulan, masehitahun)
    hb                            = hariKeBulanBULAN(th.hari, hijriah.tahun % 30);
    hijriah.tahun                 += hb.tahun;
    //menghitung hijriahbulan dan hijriahhari
-   hijriah.bulan                 = hb.bulan;
+   hijriah.bulan                 = hb.bulan + 1;
    hijriah.tanggal               = hb.hari;
    return JSON.stringify(hijriah);
 }
@@ -160,7 +161,7 @@ function hariKeTahunBULAN(hari)
    var tahun = { tahun:0, hari:0 };
    for (var i=1; i <= 30; i++)
    {
-      if (hari < (isKabisatBULAN(i) ? 355 : 354))
+      if (hari <= (isKabisatBULAN(i) ? 355 : 354))
       {
          tahun.hari = hari;
          return tahun;
@@ -180,21 +181,12 @@ function hariKeTahunBULAN(hari)
 function hariKeBulanBULAN(hari, tahun)
 {
    var bulan = { tahun:0, bulan:0, hari:0 };
-   for (var i=1; i <= 30; i++)
+   for (var i=1; i <= 12; i++)
    {
       //if (hari < (i%2==0 ? 29 : 30))
       if (hari <= jumlahHariDalamBulanBULAN(i, tahun))
       {
          bulan.hari = hari;
-         if (bulan.bulan == 0) 
-         {
-            bulan.bulan = 12;
-            bulan.tahun = -1;
-         }
-         if (bulan.hari == 0)
-         {
-             bulan.hari = 1;
-         }
          return bulan;
       }
       //hari -= (i%2==0 ? 29 : 30);
@@ -253,18 +245,9 @@ function hariKeBulanMATAHARI(hari)
    var bulan = { tahun:0, bulan:0, hari:0 };
    for (var i=1; i <= 12; i++)
    {
-      if (hari < jumlahHari1Bulan[i])
+      if (hari <= jumlahHari1Bulan[i])
       {
          bulan.hari  = hari;
-         if (bulan.bulan == 0) 
-         {
-            bulan.bulan = 12;
-            bulan.tahun = -1;
-         }
-         if (bulan.hari == 0)
-         {
-             bulan.hari = 1;
-         }
          return bulan;
       }
       hari -= jumlahHari1Bulan[i];
@@ -333,11 +316,11 @@ function sum( obj )
 //3. Menghitung Tinggi Bulan Saat Terbenam Matahari
 
 //contoh skrip
-document.write('10/8/1364 seharusnya 17/8/1945, tes: ' + Hijriah2MasehiUrfi(10, 8, 1364) + '<br/>');
-document.write('29/8/1429 seharusnya 29/9/2008, tes: ' + Hijriah2MasehiUrfi(29, 8, 1429) + '<br/>');
-document.write('17/8/1945 seharusnya 10/8/1364, tes: ' + Masehi2HijriahUrfi(17, 8, 1945) + '<br/>');
-document.write('29/9/2008 seharusnya 29/8/1429, tes: ' + Masehi2HijriahUrfi(29, 9, 2008) + '<br/>');
-var th = 1442, H = satuHijriah(th);
+document.write('10/9/1364 seharusnya 17/8/1945, tes: ' + Hijriah2MasehiUrfi(10, 9, 1364) + '<br/>');
+document.write('29/9/1429 seharusnya 29/9/2008, tes: ' + Hijriah2MasehiUrfi(29, 9, 1429) + '<br/>');
+document.write('17/8/1945 seharusnya 10/9/1364, tes: ' + Masehi2HijriahUrfi(17, 8, 1945) + '<br/>');
+document.write('29/9/2008 seharusnya 29/9/1429, tes: ' + Masehi2HijriahUrfi(29, 9, 2008) + '<br/>');
+var th = 1443, H = satuHijriah(th);
 document.write('Daftar tanggal 1 pada tahun ' + th + 'H<br/>' + H + '<br/>');
 var rH = JSON.parse(H), listRSatuH = [ 0 ];;
 for (var i=1; i<=12; i++)
