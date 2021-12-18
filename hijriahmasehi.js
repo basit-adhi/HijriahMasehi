@@ -33,9 +33,9 @@ function Hijriah2MasehiUrfi(hijritanggal, hijribulan, hijritahun)
    var hariBULAN = {daur:0, sisadaur_kabisat:0, sisadaur_basitat:0, bulan_ganjil:0, bulan_genap:0, hari:0, koreksidanselisih: selisihMasehiHijriah + koreksiPausG13};
    var totalHariMasehi, hariSisaDaurMATAHARI;
    var tahunmatahari, hb;
-   var masehi = {tanggal:1, bulan:1, tahun:1};
+   var masehi = {tanggal:0, bulan:0, tahun:1};
    //menghitung hijritahun
-   hijritahun--;
+   hijritahun--;   
    hariBULAN.daur                = Math.floor(hijritahun / 30) * usiaBulan30Tahun;
    tahunSisaDaurBULAN            = hijritahun % 30;
    hariBULAN.sisadaur_kabisat    = jumlahKabisatBULAN(tahunSisaDaurBULAN) * 355;
@@ -45,14 +45,19 @@ function Hijriah2MasehiUrfi(hijritanggal, hijribulan, hijritahun)
    hariBULAN.bulan_genap         = Math.floor(hijribulan / 2) * 29;
    //hijritanggal
    hariBULAN.hari                = hijritanggal;
-   //menghitung masehitahun
+   //menghitung masehitahun, masehibulan dan masehihari
    totalHariMasehi               = sum(hariBULAN);
    hariSisaDaurMATAHARI          = totalHariMasehi % usiaMatahari4Tahun;
-   masehi.tahun                  = Math.floor(totalHariMasehi / usiaMatahari4Tahun) * 4;
-   masehi.tahun                  += Math.floor(hariSisaDaurMATAHARI / 365);
-   //menghitung masehibulan dan masehihari
    hb                            = hariKeBulanMATAHARI(hariSisaDaurMATAHARI % 365);
-   masehi.bulan                  = hb.bulan;
+   masehi.tahun                  += hb.tahun;
+   masehi.tahun                  += Math.floor(totalHariMasehi / usiaMatahari4Tahun) * 4;
+   masehi.tahun                  += Math.floor(hariSisaDaurMATAHARI / 365); 
+   masehi.bulan                  += hb.bulan + 1;
+   if (masehi.bulan > 12)
+   {
+      masehi.bulan -= 12;
+      masehi.tahun += 1;
+   }
    masehi.tanggal                = hb.hari;
    return JSON.stringify(masehi);
 }
@@ -70,7 +75,9 @@ function Masehi2HijriahUrfi(masehitanggal, masehibulan, masehitahun)
 {
    var hariMATAHARI = { haritanggal:0, haribulan:0, tahunkabisat:0, sisatahunkabisat:0, koreksidanselisih: -selisihMasehiHijriah -koreksiPausG13 };
    var totalHariMasehi, th, hb;
-   var hijriah = {tanggal:1, bulan:1, tahun:1};
+   var hijriah = {tanggal:0, bulan:0, tahun:0};
+   masehitahun--;
+   masehibulan--;
    //menghitung masehitanggal
    hariMATAHARI.haritanggal      = masehitanggal;
    //menghitung masehibulan
@@ -80,11 +87,12 @@ function Masehi2HijriahUrfi(masehitanggal, masehibulan, masehitahun)
    hariMATAHARI.sisatahunkabisat = (masehitahun % 4) * 365;
    totalHariMasehi               = sum(hariMATAHARI);
    //menghitung hijriahtahun
-   hijriah.tahun                 = Math.floor(totalHariMasehi / usiaBulan30Tahun) * 30;
+   hijriah.tahun                 += Math.floor(totalHariMasehi / usiaBulan30Tahun) * 30;
    th                            = hariKeTahunBULAN(totalHariMasehi % usiaBulan30Tahun);
    hijriah.tahun                 += th.tahun + 1;
+   hb                            = hariKeBulanBULAN(th.hari, hijriah.tahun % 30);
+   hijriah.tahun                 += hb.tahun;
    //menghitung hijriahbulan dan hijriahhari
-   hb                            = hariKeBulanBULAN(th.hari);
    hijriah.bulan                 = hb.bulan;
    hijriah.tanggal               = hb.hari;
    return JSON.stringify(hijriah);
@@ -150,7 +158,7 @@ function jumlahBasitatBULAN(tahun)
 function hariKeTahunBULAN(hari)
 {
    var tahun = { tahun:0, hari:0 };
-   for (i=1; i <= 30; i++)
+   for (var i=1; i <= 30; i++)
    {
       if (hari < (isKabisatBULAN(i) ? 355 : 354))
       {
@@ -169,19 +177,43 @@ function hariKeTahunBULAN(hari)
 * output:
 * jumlah bulan dan sisa hari (Object), misal: {"bulan":8,"hari":10}
 **/
-function hariKeBulanBULAN(hari)
+function hariKeBulanBULAN(hari, tahun)
 {
-   var bulan = { bulan:0, hari:0 };
-   for (i=1; i <= 30; i++)
+   var bulan = { tahun:0, bulan:0, hari:0 };
+   for (var i=1; i <= 30; i++)
    {
-      if (hari < (i%2==0 ? 29 : 30))
+      //if (hari < (i%2==0 ? 29 : 30))
+      if (hari <= jumlahHariDalamBulanBULAN(i, tahun))
       {
          bulan.hari = hari;
+         if (bulan.bulan == 0) 
+         {
+            bulan.bulan = 12;
+            bulan.tahun = -1;
+         }
+         if (bulan.hari == 0)
+         {
+             bulan.hari = 1;
+         }
          return bulan;
       }
-      hari -= (i%2==0 ? 29 : 30);
+      //hari -= (i%2==0 ? 29 : 30);
+      hari -= jumlahHariDalamBulanBULAN(i, tahun);
       bulan.bulan++;
    }
+}
+
+/**[halaman 19 no 8, 9]*/
+function jumlahHariDalamBulanBULAN(bulan, tahun)
+{
+    if (bulan == 12 && isKabisatBULAN(tahun))
+    {
+        return 30;
+    }
+    else
+    {
+        return (bulan%2==0 ? 29 : 30);
+    }
 }
 
 /**
@@ -214,16 +246,25 @@ function roundDesimal(desimal, digit)
 * input:
 * hari adalah jumlah hari
 * output:
-* jumlah bulan dan sisa hari (Object), misal: {"bulan":8,"hari":10}
+* jumlah bulan dan sisa hari (Object), misal: {"tahun": 0, "bulan":8,"hari":10}
 **/
 function hariKeBulanMATAHARI(hari)
 {
-   var bulan = { bulan:0, hari:0 };
-   for (i=1; i <= 12; i++)
+   var bulan = { tahun:0, bulan:0, hari:0 };
+   for (var i=1; i <= 12; i++)
    {
       if (hari < jumlahHari1Bulan[i])
       {
-         bulan.hari = hari;
+         bulan.hari  = hari;
+         if (bulan.bulan == 0) 
+         {
+            bulan.bulan = 12;
+            bulan.tahun = -1;
+         }
+         if (bulan.hari == 0)
+         {
+             bulan.hari = 1;
+         }
          return bulan;
       }
       hari -= jumlahHari1Bulan[i];
@@ -241,11 +282,28 @@ function hariKeBulanMATAHARI(hari)
 function bulanKeHariMATAHARI(bulan)
 {
    var hari = 0;
-   for (i=1; i <= bulan; i++)
+   for (var i=1; i <= bulan; i++)
    {
       hari += jumlahHari1Bulan[i];
    }
    return hari;
+}
+
+/**
+* fungsi untuk mendapatkan tanggal 1 setiap bulan pada <tahun> Hijriah
+* input:
+* tahun adalah tahun dalam Hijriah
+* output:
+* list tanggal 1 setiap bulan pada tahun tersebut (JSON)
+**/
+function satuHijriah(tahun)
+{
+   var listSatuH = [ 0 ];
+   for (var i=1; i<=12; i++)
+   {
+      listSatuH[i] = JSON.parse(Hijriah2MasehiUrfi(1, i, tahun));
+   }
+   return JSON.stringify(listSatuH);
 }
 
 /**
@@ -275,5 +333,15 @@ function sum( obj )
 //3. Menghitung Tinggi Bulan Saat Terbenam Matahari
 
 //contoh skrip
-document.write(Hijriah2MasehiUrfi(29, 8, 1429));
-document.write(Masehi2HijriahUrfi(29, 8, 2007));
+document.write('10/8/1364 seharusnya 17/8/1945, tes: ' + Hijriah2MasehiUrfi(10, 8, 1364) + '<br/>');
+document.write('29/8/1429 seharusnya 29/9/2008, tes: ' + Hijriah2MasehiUrfi(29, 8, 1429) + '<br/>');
+document.write('17/8/1945 seharusnya 10/8/1364, tes: ' + Masehi2HijriahUrfi(17, 8, 1945) + '<br/>');
+document.write('29/9/2008 seharusnya 29/8/1429, tes: ' + Masehi2HijriahUrfi(29, 9, 2008) + '<br/>');
+var th = 1442, H = satuHijriah(th);
+document.write('Daftar tanggal 1 pada tahun ' + th + 'H<br/>' + H + '<br/>');
+var rH = JSON.parse(H), listRSatuH = [ 0 ];;
+for (var i=1; i<=12; i++)
+{
+   listRSatuH[i] = JSON.parse(Masehi2HijriahUrfi(rH[i].tanggal, rH[i].bulan, rH[i].tahun));
+}
+document.write('Kebalikan dari tanggal di atas, seharusnya muncul tanggal 1 semua pada tahun ' + th + 'H<br/>' +JSON.stringify(listRSatuH) + '<br/>');
