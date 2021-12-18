@@ -1,4 +1,3 @@
-<script>
 /** 
  * hijriahmasehi.js
  * <br/> Converter Hijriah ke Masehi dan sebaliknya
@@ -278,4 +277,3 @@ function sum( obj )
 //contoh skrip
 document.write(Hijriah2MasehiUrfi(29, 8, 1429));
 document.write(Masehi2HijriahUrfi(29, 8, 2007));
-</script>
