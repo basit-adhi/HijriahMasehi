@@ -19,7 +19,7 @@ function daftarKoreksi($tahun=-1)
 {
     $koreksi = [];
          /* bulan ke-      1     2     3     4     5     6     7     8     9     10    11    12  */
-    $koreksi[1443] = [1 => null, null, null, null, null, null, 0,    0,    1,    1,    1,    1   ];
-    $koreksi[1444] = [1 => 2,    1,    2,    2,    2,    2,    null, null, null, null, null, null];
+    $koreksi[1443] = [1 => null, null, null, null, null, 0,    0,    0,    0,    1,    1,    0   ];
+    $koreksi[1444] = [1 => 1,    0,    1,    1,    1,    1,    null, null, null, null, null, null];
     return $tahun == -1 || !array_key_exists($tahun, $koreksi) ? $koreksi : $koreksi[$tahun];
 }
