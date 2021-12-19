@@ -21,4 +21,4 @@ $H = satuHijriah($th);
 echo('Daftar tanggal 1 pada tahun ' . $th . 'H<br/>' . $H . '<br/>');
 $rH = reverseSatuHijriah($th);
 echo('Kebalikan dari tanggal di atas, seharusnya muncul tanggal 1 semua pada tahun ' . $th . 'H<br/>' . $rH . '<br/>');
-echo(json_encode($koreksi));
+echo(json_encode(daftarKoreksi());
