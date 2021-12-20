@@ -19,11 +19,13 @@ $tanggal = array_key_exists("tanggal", $_GET) ? filter_input(INPUT_GET, "tanggal
 $bulan   = array_key_exists("bulan", $_GET)   ? filter_input(INPUT_GET, "bulan", FILTER_SANITIZE_NUMBER_INT)   : "";
 $tahun   = array_key_exists("tahun", $_GET)   ? filter_input(INPUT_GET, "tahun", FILTER_SANITIZE_NUMBER_INT)   : "";
 
+const mtd = [ METODE_URFI, METODE_MUHAMMADIYAH ];
+
 switch ($fungsi)
 {
    case "help":
       $ret = [ "fungsi"  => [ "help"           => "[url:api/help] menampilkan help", 
-                              "metode"         => "[url:api/metode] menampilkan metode yang didukung", 
+                              "metode"         => "[url:api/metode] menampilkan metode yang didukung, yaitu ".implode(", ", mtd), 
                               "koreksi"        => "[url:api/koreksi/<metode>/<tahun>] mengembalikan daftar koreksi pada <tahun> yang diminta", 
                               "hijriah2masehi" => "[url:api/hijriah2masehi/<metode>/<tahun>/<bulan>/<tanggal>] mengembalikan tanggal masehi dari <tanggal>, <bulan> dan <tahun> hijriah yang diminta dengan <metode> yang dikehendaki",
                               "masehi2hijriah" => "[url:api/masehi2hijriah/<metode>/<tahun>/<bulan>/<tanggal>] mengembalikan tanggal hijriah dari <tanggal>, <bulan> dan <tahun> masehi yang diminta dengan <metode> yang dikehendaki",
