@@ -4,7 +4,7 @@
  * <br/> Converter Hijriah ke Masehi dan sebaliknya
  * <br/> profil  https://id.linkedin.com/in/basitadhi
  * <br/> buat    2021-12-19
- * <br/> rev     -
+ * <br/> rev     2021-12-20
  * <br/> sifat   open source
  * @author Basit Adhi Prabowo, S.T. <basit@unisayogya.ac.id>
  * @access public
@@ -15,12 +15,17 @@ require_once("koreksihijriah.php");
 define("FLAG_OUTPUT_JSON", "json");
 define("FLAG_OUTPUT_ARRAY", "array");
 
+define("METODE_URFI", "urfi");
+define("METODE_MUHAMMADIYAH", "muhammadiyah");
+
 //sumber utama: http://tarjih.muhammadiyah.or.id/muhfile/tarjih/download/pedoman_hisab_muhammadiyah.pdf
 const usiaBulan30Tahun     = 10631; //usia bulan dalam 30 tahun [halaman 19 no 5]
 const usiaMatahari4Tahun   = 1461; //usia matahari dalam 4 tahun [halaman 89]
 const selisihMasehiHijriah = 227015; //sejak 01-01-01H [halaman 89]
 const koreksiPausG13       = 13; //koreksi Paus Gregorius XIII [halaman 89]
-const jumlahHari1Bulan     = [ 1 => 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 ];
+const jumlahHari1Bulan     = [ 1 => 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 ];
+const namaBulanHijriah     = [ 1 => "Muharram", "Shafar", "Rabi'ul Awwal", "Rabi'ul Akhir", "Jumadil Awwal", "Jumadil Akhir", "Rajab", "Sya'ban", "Ramadhan", "Syawwal", "Dzulqa'dah", "Dzulhijjah" ];
+const namaBulanMasehi      = [ 1 => "Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember" ];
 
 const koordinatJogja       = [ "lat" =>  -7.8, "long" =>  110.35 ]; //-7 48', 110 21' [halaman 88]
 
@@ -33,7 +38,7 @@ const koordinatJogja       = [ "lat" =>  -7.8, "long" =>  110.35 ]; //-7 48', 11
 * output:
 * penanggalan masehi (JSON), misal: {"tanggal":29,"bulan":8,"tahun":2007}
 **/
-function Hijriah2MasehiUrfi($hijritanggal, $hijribulan, $hijritahun, $flag=FLAG_OUTPUT_JSON)
+function Hijriah2Masehi($hijritanggal, $hijribulan, $hijritahun, $flag=FLAG_OUTPUT_JSON, $metode=METODE_URFI)
 {
    $tahunSisaDaurBULAN = 0;
    $hariBULAN = ["daur" => 0, "sisadaur_kabisat" => 0, "sisadaur_basitat" => 0, "bulan_ganjil" => 0, "bulan_genap" => 0, "hari" => 0, "koreksidanselisih" => selisihMasehiHijriah + koreksiPausG13];
@@ -42,6 +47,12 @@ function Hijriah2MasehiUrfi($hijritanggal, $hijribulan, $hijritahun, $flag=FLAG_
    $tahunmatahari = 0;
    $hb = [];
    $masehi = ["tanggal" => 0, "bulan" => 0, "tahun" => 1];
+   $terbilanghijriah = $hijritanggal." ".namaBulanHijriah[$hijribulan]." ".$hijritahun." H";
+   //koreksi
+   if ($metode == METODE_MUHAMMADIYAH)
+   {
+      $harikoreksi = getKoreksi($hijritahun, $hijribulan);
+   }
    //menghitung hijritahun
    $hijritahun--;
    $hijribulan--;
@@ -61,13 +72,13 @@ function Hijriah2MasehiUrfi($hijritanggal, $hijribulan, $hijritahun, $flag=FLAG_
    $masehi["tahun"]                  += $hb["tahun"];
    $masehi["tahun"]                  += floor($totalHariMasehi / usiaMatahari4Tahun) * 4;
    $masehi["tahun"]                  += floor($hariSisaDaurMATAHARI / 365); 
-   $masehi["bulan"]                  += $hb["bulan"] + 1;
-   if ($masehi["bulan"] > 12)
-   {
-      $masehi["bulan"] -= 12;
-      $masehi["tahun"] += 1;
-   }
+   $masehi["bulan"]                  = $hb["bulan"] + 1;
    $masehi["tanggal"]                = $hb["hari"];
+   if ($metode == METODE_MUHAMMADIYAH && $harikoreksi != 0)
+   {
+      $masehi = intervalTanggal($masehi, $harikoreksi);
+   }
+   $masehi["terbilang"]              = $terbilanghijriah." | ".$masehi["tanggal"]." ".namaBulanMasehi[$masehi["bulan"]]." ".$masehi["tahun"];
    return $flag == FLAG_OUTPUT_JSON ? json_encode($masehi) : $masehi;
 }
 
@@ -80,16 +91,17 @@ function Hijriah2MasehiUrfi($hijritanggal, $hijribulan, $hijritahun, $flag=FLAG_
 * output:
 * penanggalan hijriah (JSON), misal: {"tanggal":29,"bulan":8,"tahun":1429}
 **/
-function Masehi2HijriahUrfi($masehitanggal, $masehibulan, $masehitahun, $flag=FLAG_OUTPUT_JSON)
+function Masehi2Hijriah($masehitanggal, $masehibulan, $masehitahun, $flag=FLAG_OUTPUT_JSON, $metode=METODE_URFI)
 {
    $hariMATAHARI = [ "haritanggal" => 0, "haribulan" => 0, "tahunkabisat" => 0, "sisatahunkabisat" => 0, "koreksidanselisih" =>  -selisihMasehiHijriah -koreksiPausG13 ];
    $totalHariMasehi = 0;
    $th = [];
    $hb = [];
    $hijriah = ["tanggal" => 0, "bulan" => 0, "tahun" => 0];
+   $terbilangmasehi = $masehitanggal." ".namaBulanMasehi[$masehibulan]." ".$masehitahun;
+   //menghitung masehitanggal
    $masehitahun--;
    $masehibulan--;
-   //menghitung masehitanggal
    $hariMATAHARI["haritanggal"]      = $masehitanggal;
    //menghitung masehibulan
    $hariMATAHARI["haribulan"]        = bulanKeHariMATAHARI($masehibulan);
@@ -106,7 +118,92 @@ function Masehi2HijriahUrfi($masehitanggal, $masehibulan, $masehitahun, $flag=FL
    //menghitung hijriahbulan dan hijriahhari
    $hijriah["bulan"]                 = $hb["bulan"] + 1;
    $hijriah["tanggal"]               = $hb["hari"];
+   //koreksi
+   $harikoreksi = getKoreksi($hijriah["tahun"], $hijriah["bulan"]);
+   if ($metode == METODE_MUHAMMADIYAH && $harikoreksi != 0)
+   {
+      $hijriah  = kurangTanggalHijriah($hijriah, $harikoreksi);
+   }
+   $hijriah["terbilang"]             = $hijriah["tanggal"]." ".namaBulanHijriah[$hijriah["bulan"]]." ".$hijriah["tahun"]." H | ".$terbilangmasehi;
    return $flag == FLAG_OUTPUT_JSON ? json_encode($hijriah) : $hijriah;
+}
+
+
+function kurangTanggalHijriah($tanggal, $hari)
+{
+   $tanggal["tanggal"] -= $hari;
+   if ($tanggal["tanggal"] <= 0)
+   {
+      $tanggal["bulan"]--;
+      if ($tanggal["bulan"] <= 0)
+      {
+         $tanggal["bulan"] = 12;
+         $tanggal["tahun"]--;
+      }
+      global $umurbulan;
+      if (!is_null($umurbulan[$tanggal["tahun"]][$tanggal["bulan"]]))
+      {
+         $tanggal["tanggal"] = $umurbulan[$tanggal["tahun"]][$tanggal["bulan"]] - $tanggal["tanggal"];
+      }
+   }
+  return $tanggal;
+}
+
+/**
+* fungsi untuk menambah/mengurang tanggal dengan interval <intervaldalamhari>
+* input:
+* tanggal adalah tanggal yang akan ditambahkan berupa senarai dengan indeks "tahun", "bulan", "tanggal", misal: [ "tahun" => 1970, "bulan" => 1, "tanggal" => 1 ]
+* intervaldalamhari adalah interval dalam hari, bisa bernilai positif maupun negatif
+* output:
+* tanggal baru berupa senarai dengan indeks "tahun", "bulan", "tanggal", misal: [ "tahun" => 1970, "bulan" => 1, "tanggal" => 1 ]
+*/
+function intervalTanggal($tanggal, $intervaldalamhari)
+{
+   $tanggal = buatTanggal($tanggal);
+   date_add($tanggal,date_interval_create_from_date_string($intervaldalamhari." days"));
+   $ret     = explode("-", date_format($tanggal,"d-m-Y"));
+   return [ "tanggal" => (int) $ret[0], "bulan" => (int) $ret[1], "tahun" => (int) $ret[2] ];
+}
+
+/**
+* fungsi untuk mengetahui berapa hari selisih antara <tanggal1> dengan <tanggal2>, misalnya tanggal 1 hingga tanggal 2 selisihnya adalah 1 hari
+* input:
+* tanggal1 adalah tanggal awal berupa senarai dengan indeks "tahun", "bulan", "tanggal", misal: [ "tahun" => 1970, "bulan" => 1, "tanggal" => 1 ]
+* tanggal2 adalah tanggal akhir berupa senarai dengan indeks "tahun", "bulan", "tanggal", misal: [ "tahun" => 1970, "bulan" => 1, "tanggal" => 1 ]
+* output:
+* berapa hari selisih antara tanggal pertama dengan tanggal kedua
+*/
+function selisihTanggal($tanggal1, $tanggal2)
+{
+   $origin = buatTanggal($tanggal1);
+   $target = buatTanggal($tanggal2);
+   $interval = date_diff($origin, $target);
+   return (int) ($interval->format('%R').($interval->format('%a')));
+}
+
+/**
+* fungsi untuk mengetahui berapa hari rentang antara <tanggal1> dengan <tanggal2>, misalnya tanggal 1 hingga tanggal 2 rentangnya adalah 2 hari
+* input:
+* tanggal1 adalah tanggal awal berupa senarai dengan indeks "tahun", "bulan", "tanggal", misal: [ "tahun" => 1970, "bulan" => 1, "tanggal" => 1 ]
+* tanggal2 adalah tanggal akhir berupa senarai dengan indeks "tahun", "bulan", "tanggal", misal: [ "tahun" => 1970, "bulan" => 1, "tanggal" => 1 ]
+* output:
+* berapa hari rentang antara tanggal pertama dengan tanggal kedua
+*/
+function rentangTanggal($tanggal1, $tanggal2)
+{
+   return selisihTanggal($tanggal1, $tanggal2) + 1;
+}
+
+/**
+* fungsi untuk membuat tanggal dari senarai <tanggal> dengan indeks "tahun", "bulan", "tanggal", misal: [ "tahun" => 1970, "bulan" => 1, "tanggal" => 1 ]
+* input:
+* tanggal adalah tanggal yang akan dibuat berupa senarai dengan indeks "tahun", "bulan", "tanggal", misal: [ "tahun" => 1970, "bulan" => 1, "tanggal" => 1 ]
+* output:
+* tanggal dengan format date
+*/
+function buatTanggal($tanggal)
+{
+   return date_create($tanggal["tahun"]."-".$tanggal["bulan"]."-".$tanggal["tanggal"]);
 }
 
 /**
@@ -205,7 +302,13 @@ function hariKeBulanBULAN($hari, $tahun)
    }
 }
 
-/**[halaman 19 no 8, 9]*/
+/**fungsi untuk menampilkan jumlah hari dalam <bulan> pada <tahun> dengan metode URFI [halaman 19 no 8, 9]
+* input:
+* bulan adalah bulan yang akan diketahui jumlah harinya
+* tahun adalah tahun dari bulan yang akan diketahui jumlah harinya
+* output:
+* jumlah hari
+*/
 function jumlahHariDalamBulanBULAN($bulan, $tahun)
 {
     if ($bulan == 12 && isKabisatBULAN($tahun))
@@ -290,12 +393,12 @@ function bulanKeHariMATAHARI($bulan)
 * daftar tanggal Masehi untuk setiap tanggal 1 Hijriah setiap bulan pada tahun tersebut (JSON)
 * contoh output: [{"tanggal":28,"bulan":7,"tahun":2022},{"tanggal":27,"bulan":8,"tahun":2022},{"tanggal":25,"bulan":9,"tahun":2022},{"tanggal":25,"bulan":10,"tahun":2022},{"tanggal":23,"bulan":11,"tahun":2022},{"tanggal":23,"bulan":12,"tahun":2022},{"tanggal":22,"bulan":1,"tahun":2023},{"tanggal":21,"bulan":2,"tahun":2023},{"tanggal":21,"bulan":3,"tahun":2023},{"tanggal":20,"bulan":4,"tahun":2023},{"tanggal":19,"bulan":5,"tahun":2023},{"tanggal":18,"bulan":6,"tahun":2023}]
 **/
-function satuHijriah($tahun, $flag=FLAG_OUTPUT_JSON)
+function satuHijriah($tahun, $flag=FLAG_OUTPUT_JSON, $metode=METODE_URFI)
 {
    $daftarSatuH = [ ];
    for ($i=1; $i <= 12; $i++)
    {
-      $daftarSatuH[$i] = Hijriah2MasehiUrfi(1, $i, $tahun, FLAG_OUTPUT_ARRAY);
+      $daftarSatuH[$i] = Hijriah2Masehi(1, $i, $tahun, FLAG_OUTPUT_ARRAY, $metode);
    }
    return $flag == FLAG_OUTPUT_JSON ? json_encode($daftarSatuH) : $daftarSatuH;
 }
@@ -308,15 +411,45 @@ function satuHijriah($tahun, $flag=FLAG_OUTPUT_JSON)
 * daftar tanggal 1 setiap bulan pada tahun tersebut (JSON)
 * contoh output: [{"tanggal":1,"bulan":1,"tahun":1444},{"tanggal":1,"bulan":2,"tahun":1444},{"tanggal":1,"bulan":3,"tahun":1444},{"tanggal":1,"bulan":4,"tahun":1444},{"tanggal":1,"bulan":5,"tahun":1444},{"tanggal":1,"bulan":6,"tahun":1444},{"tanggal":1,"bulan":7,"tahun":1444},{"tanggal":1,"bulan":8,"tahun":1444},{"tanggal":1,"bulan":9,"tahun":1444},{"tanggal":1,"bulan":10,"tahun":1444},{"tanggal":1,"bulan":11,"tahun":1444},{"tanggal":1,"bulan":12,"tahun":1444}]
 */
-function reverseSatuHijriah($tahun, $flag=FLAG_OUTPUT_JSON)
+function reverseSatuHijriah($tahun, $flag=FLAG_OUTPUT_JSON, $metode=METODE_URFI)
 {
-    $rH = satuHijriah($tahun, FLAG_OUTPUT_ARRAY);
-    $daftarRSatuH = [ ];
-    for ($i=1; $i <= 12; $i++)
-    {
-       $daftarRSatuH[$i] = Masehi2HijriahUrfi($rH[$i]["tanggal"], $rH[$i]["bulan"], $rH[$i]["tahun"], FLAG_OUTPUT_ARRAY);
-    }
-    return $flag == FLAG_OUTPUT_JSON ? json_encode($daftarRSatuH) : $daftarRSatuH;
+   $rH = satuHijriah($tahun, FLAG_OUTPUT_ARRAY, $metode);
+   $daftarRSatuH = [ ];
+   for ($i=1; $i <= 12; $i++)
+   {
+      $daftarRSatuH[$i] = Masehi2Hijriah($rH[$i]["tanggal"], $rH[$i]["bulan"], $rH[$i]["tahun"], FLAG_OUTPUT_ARRAY, $metode);
+   }
+   return $flag == FLAG_OUTPUT_JSON ? json_encode($daftarRSatuH) : $daftarRSatuH;
+}
+
+/**
+* fungsi untuk mendapatkan umur bulan pada <tahunhijriah>
+* input:
+* tahunhijriah adalah tahun pada bulan hijriah
+* output:
+* daftar jumlah bulan pada tahun tersebut (JSON)
+* contoh output:
+* {"1":29,"2":30,"3":30,"4":29,"5":30,"6":null,"7":null,"8":null,"9":null,"10":null,"11":null,"12":null}
+*/
+function daftarUmurbulanKoreksi($tahunhijriah, $flag=FLAG_OUTPUT_JSON)
+{
+   global $koreksi;
+   $ret = [];
+   //umur didapatkan dari selisih tanggal 1 bulan hijriah target (dalam masehi) dengan tanggal 1 bulan berikutnya (dalam masehi)
+   foreach ($koreksi[$tahunhijriah] as $ikoreksi => $koreksibulan)
+   {
+      if (!is_null($koreksibulan) && !is_null($koreksi[($ikoreksi<12)?$tahunhijriah:$tahunhijriah+1][($ikoreksi<12)?$ikoreksi+1:1]))
+      {
+         $m1 = Hijriah2Masehi(1, $ikoreksi, $tahunhijriah, FLAG_OUTPUT_ARRAY, METODE_MUHAMMADIYAH);
+         $m2 = Hijriah2Masehi(1, ($ikoreksi<12)?$ikoreksi+1:1, ($ikoreksi<12)?$tahunhijriah:$tahunhijriah+1, FLAG_OUTPUT_ARRAY, METODE_MUHAMMADIYAH);
+         $ret[$ikoreksi] = selisihTanggal($m1, $m2);
+      }
+      else
+      {
+        $ret[$ikoreksi] = null;
+      }
+   }
+   return $flag == FLAG_OUTPUT_JSON ? json_encode($ret) : $ret;
 }
 
 /**
