@@ -1,7 +1,7 @@
 <?php
 /** 
  * koreksihijriah.php
- * <br/> Koreksi perhitungan Urfi agar menjadi perhitungan Hakiki
+ * <br/> Koreksi perhitungan Urfi agar menjadi perhitungan Hakiki yang digunakan oleh Muhammadiyah dengan titik hitung di Yogyakarta
  * <br/> profil  https://id.linkedin.com/in/basitadhi
  * <br/> buat    2021-12-19
  * <br/> rev     2021-12-20
