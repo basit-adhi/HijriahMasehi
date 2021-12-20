@@ -30,15 +30,15 @@ $umurbulan[1444] = [1 => 29,   30,   30,   29,   30,   null, null, null, null, n
 */
 function getKoreksi($tahun, $bulan)
 {
-    global $koreksi;
-    if (array_key_exists(''.$tahun, $koreksi))
-    {
-       return (array_key_exists(''.$bulan, $koreksi[$tahun])) ? $koreksi[$tahun][$bulan] : (int) 0;
-    }
-    else
-    {
-       return (int) 0;
-    }
+   global $koreksi;
+   if (array_key_exists(''.$tahun, $koreksi))
+   {
+      return (array_key_exists(''.$bulan, $koreksi[$tahun])) ? $koreksi[$tahun][$bulan] : (int) 0;
+   }
+   else
+   {
+      return (int) 0;
+   }
 }
 
 /**
@@ -51,13 +51,34 @@ function getKoreksi($tahun, $bulan)
 */
 function getUmurbulan($tahun, $bulan)
 {
-    global $umurbulan;
-    if (array_key_exists(''.$tahun, $umurbulan))
-    {
-       return (array_key_exists(''.$bulan, $umurbulan[$tahun])) ? $umurbulan[$tahun][$bulan] : (int) 0;
-    }
-    else
-    {
-       return (int) 0;
-    }
+   global $umurbulan;
+   if (array_key_exists(''.$tahun, $umurbulan))
+   {
+      return (array_key_exists(''.$bulan, $umurbulan[$tahun])) ? $umurbulan[$tahun][$bulan] : (int) 0;
+   }
+   else
+   {
+      return (int) 0;
+   }
+}
+
+/**
+* fungsi untuk memeriksa apakah tanggal hijriah masuk dalam jangkauan dengan metode yang digunakan oleh Muhammadiyah
+* input:
+* tahun adalah tahun hijriah
+* bulan adalah bulan hijriah
+* output:
+* status pemeriksaan, true: di luar jangkauan, false: di dalam jangkauan
+*/
+function cekDiluarJangkauan($tahun, $bulan)
+{
+   global $koreksi;
+   if (array_key_exists(''.$tahun, $koreksi))
+   {
+      return (array_key_exists(''.$bulan, $koreksi[$tahun])) ? false : true;
+   }
+   else
+   {
+      return true;
+   }
 }
