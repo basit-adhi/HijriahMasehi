@@ -133,7 +133,7 @@ function Masehi2Hijriah($masehitanggal, $masehibulan, $masehitahun, $flag=FLAG_O
    {
       $hijriah  = kurangTanggalHijriah($hijriah, $harikoreksi);
    }
-   $hijriah["bulan"]                 = namaBulanHijriah[$hijriah["bulan"]];
+   $hijriah["namabulan"]             = namaBulanHijriah[$hijriah["bulan"]];
    $lanjut = !($metode == METODE_MUHAMMADIYAH && cekDiluarJangkauan($hijriah["tahun"], $hijriah["bulan"]));
    if ($lanjut)
    {
