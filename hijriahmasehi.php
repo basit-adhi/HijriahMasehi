@@ -137,7 +137,7 @@ function Masehi2Hijriah($masehitanggal, $masehibulan, $masehitahun, $flag=FLAG_O
    $lanjut = !($metode == METODE_MUHAMMADIYAH && cekDiluarJangkauan($hijriah["tahun"], $hijriah["bulan"]));
    if ($lanjut)
    {
-      $hijriah["terbilang"]  = $hijriah["tanggal"]." ".$hijriah["bulan"]." ".$hijriah["tahun"]." H | ".$terbilangmasehi;
+      $hijriah["terbilang"]  = $hijriah["tanggal"]." ".$hijriah["namabulan"]." ".$hijriah["tahun"]." H | ".$terbilangmasehi;
    }
    else
    {
