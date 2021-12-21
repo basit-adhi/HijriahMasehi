@@ -1,4 +1,6 @@
 <?php
+//compress response
+if(!ob_start("ob_gzhandler")) ob_start();
 /** 
  * api.php
  * <br/> API hijriahmasehi
