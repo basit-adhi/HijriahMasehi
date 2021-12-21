@@ -82,7 +82,7 @@ function Hijriah2Masehi($hijritanggal, $hijribulan, $hijritahun, $flag=FLAG_OUTP
       {
          $masehi = intervalTanggal($masehi, $harikoreksi);
       }
-      $masehi["terbilang"]              = $terbilanghijriah." | ".$masehi["tanggal"]." ".$masehi["namabulan"]." ".$masehi["tahun"];
+      $masehi["terbilang"]              = $terbilanghijriah." | ".$masehi["tanggal"]." ".$masehi["namabulan"]." ".$masehi["tahun"]." M";
    }
    else
    {
@@ -107,7 +107,7 @@ function Masehi2Hijriah($masehitanggal, $masehibulan, $masehitahun, $flag=FLAG_O
    $th = [];
    $hb = [];
    $hijriah = ["tanggal" => 0, "bulan" => 0, "tahun" => 0];
-   $terbilangmasehi = $masehitanggal." ".namaBulanMasehi[$masehibulan]." ".$masehitahun;
+   $terbilangmasehi = $masehitanggal." ".namaBulanMasehi[$masehibulan]." ".$masehitahun." M";
    //menghitung masehitanggal
    $masehitahun--;
    $masehibulan--;
