@@ -77,15 +77,16 @@ function Hijriah2Masehi($hijritanggal, $hijribulan, $hijritahun, $flag=FLAG_OUTP
       $masehi["tahun"]                  += floor($hariSisaDaurMATAHARI / 365); 
       $masehi["bulan"]                  = $hb["bulan"] + 1;
       $masehi["tanggal"]                = $hb["hari"];
+      $masehi["namabulan"]              = namaBulanMasehi[$masehi["bulan"]];
       if ($metode == METODE_MUHAMMADIYAH && $harikoreksi != 0)
       {
          $masehi = intervalTanggal($masehi, $harikoreksi);
       }
-      $masehi["terbilang"]              = $terbilanghijriah." | ".$masehi["tanggal"]." ".namaBulanMasehi[$masehi["bulan"]]." ".$masehi["tahun"];
+      $masehi["terbilang"]              = $terbilanghijriah." | ".$masehi["tanggal"]." ".$masehi["namabulan"]." ".$masehi["tahun"];
    }
    else
    {
-      $masehi = [ "tanggal" => 0, "bulan" => 0, "tahun" => 0, "terbilang" => "Hijriah di luar jangkauan."];
+      $masehi = [ "tanggal" => 0, "bulan" => 0, "tahun" => 0, "namabulan" => "", "terbilang" => "Hijriah di luar jangkauan."];
    }
    return $flag == FLAG_OUTPUT_JSON ? json_encode($masehi) : $masehi;
 }
@@ -132,10 +133,11 @@ function Masehi2Hijriah($masehitanggal, $masehibulan, $masehitahun, $flag=FLAG_O
    {
       $hijriah  = kurangTanggalHijriah($hijriah, $harikoreksi);
    }
+   $hijriah["bulan"]                 = namaBulanHijriah[$hijriah["bulan"]];
    $lanjut = !($metode == METODE_MUHAMMADIYAH && cekDiluarJangkauan($hijriah["tahun"], $hijriah["bulan"]));
    if ($lanjut)
    {
-      $hijriah["terbilang"]  = $hijriah["tanggal"]." ".namaBulanHijriah[$hijriah["bulan"]]." ".$hijriah["tahun"]." H | ".$terbilangmasehi;
+      $hijriah["terbilang"]  = $hijriah["tanggal"]." ".$hijriah["bulan"]." ".$hijriah["tahun"]." H | ".$terbilangmasehi;
    }
    else
    {
