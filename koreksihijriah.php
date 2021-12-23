@@ -4,7 +4,7 @@
  * <br/> Koreksi perhitungan Urfi agar menjadi perhitungan Hakiki yang digunakan oleh Muhammadiyah dengan titik hitung di Yogyakarta
  * <br/> profil  https://id.linkedin.com/in/basitadhi
  * <br/> buat    2021-12-19
- * <br/> rev     2021-12-20
+ * <br/> rev     2021-12-23
  * <br/> sifat   open source
  * @author Basit Adhi Prabowo, S.T. <basit@unisayogya.ac.id>
  * @access public
@@ -12,14 +12,30 @@
 
 $koreksi = [];
      /* bulan ke-      1     2     3     4     5     6     7     8     9     10    11    12  */
+$koreksi[1434] = [1 => null, null, 1,    1,    1,    1,    1,    1,    1,    1,    2,    1   ];
+$koreksi[1435] = [1 => 1,    0,    1,    0,    1,    0,    0,    0,    0,    0,    1,    0   ];
+$koreksi[1436] = [1 => 1,    1,    1,    1,    1,    1,    1,    0,    1,    0,    1,    0   ];
+$koreksi[1437] = [1 => 0,    0,    1,    0,    1,   -1,    0,   -1,   -1,   -1,   -1,   -1   ];
+$koreksi[1438] = [1 => -1,  -1,    0,    0,    1,    1,    1,    1,    1,    1,    1,    0   ];
+$koreksi[1439] = [1 => 0,    0,    1,    0,    1,    1,    1,    1,    2,    1,    1,    1   ];
+$koreksi[1440] = [1 => 0,   -1,    0,    0,    0,    0,    1,    0,    1,    1,    1,    0   ];
+$koreksi[1441] = [1 => 1,    0,    0,    0,    0, null, null, null, null, null, null, null   ];
 $koreksi[1442] = [1 => null, null, null, null, null, 0,    1,    0,    1,    1,    2,    1   ];
 $koreksi[1443] = [1 => 1,    0,    1,    0,    0,    0,    0,    0,    0,    0,    1,    0   ];
 $koreksi[1444] = [1 => 1,    0,    1,    1,    1,    1,    null, null, null, null, null, null];
 
 $umurbulan = [];
        /* bulan ke-      1     2     3     4     5     6     7     8     9     10    11    12  */
+$umurbulan[1434] = [1 => null, null, 30,   29,   30,   29,   30,   29,   30,   30,   29,   30];
+$umurbulan[1435] = [1 => 29,   30,   29,   30,   29,   29,   30,   29,   30,   30,   29,   30];
+$umurbulan[1436] = [1 => 30,   29,   30,   29,   30,   29,   29,   30,   29,   30,   29,   30];
+$umurbulan[1437] = [1 => 30,   30,   29,   30,   29,   30,   29,   29,   30,   29,   30,   29];
+$umurbulan[1438] = [1 => 30,   30,   30,   29,   30,   29,   30,   29,   30,   29,   29,   29];
+$umurbulan[1439] = [1 => 30,   30,   29,   30,   30,   29,   30,   30,   29,   29,   30,   29];
+$umurbulan[1440] = [1 => 29,   30,   30,   29,   30,   30,   29,   30,   30,   29,   29,   30];
+$umurbulan[1441] = [1 => 29,   29,   30,   29,   null, null, null, null, null, null, null, null];
 $umurbulan[1442] = [1 => null, null, null, null, null, 30,   29,   30,   30,   30,   29,   30];
-$umurbulan[1443] = [1 => 29,   30,   29,   29,   30, 29,   30,   29,   30,   30,   29,   30];
+$umurbulan[1443] = [1 => 29,   30,   29,   29,   30,   29,   30,   29,   30,   30,   29,   30];
 $umurbulan[1444] = [1 => 29,   30,   30,   29,   30,   null, null, null, null, null, null, null];
 
 /**
