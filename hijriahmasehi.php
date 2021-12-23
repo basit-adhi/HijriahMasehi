@@ -46,7 +46,7 @@ function Hijriah2Masehi($hijritanggal, $hijribulan, $hijritahun, $flag=FLAG_OUTP
       $harikoreksi = getKoreksi($hijritahun, $hijribulan);
    }
    $lanjut = !($metode == METODE_MUHAMMADIYAH && cekDiluarJangkauan($hijritahun, $hijribulan)) && !is_null($harikoreksi);
-   $terbilanghijriah = $hijritanggal." ".namaBulanHijriah[$hijribulan]." ".$hijritahun." H";
+   $terbilanghijriah = $hijritanggal." ".namaBulanHijriah[(int) $hijribulan]." ".$hijritahun." H";
    if ($lanjut)
    {
       $tahunSisaDaurBULAN = 0;
@@ -87,7 +87,7 @@ function Hijriah2Masehi($hijritanggal, $hijribulan, $hijritahun, $flag=FLAG_OUTP
       {
          $masehi = intervalTanggal($masehi, $harikoreksi);
       }
-      $masehi["namabulan"]              = namaBulanMasehi[$masehi["bulan"]];
+      $masehi["namabulan"]              = namaBulanMasehi[(int) $masehi["bulan"]];
       $masehi["terbilang"]              = $terbilanghijriah." | ".$masehi["tanggal"]." ".$masehi["namabulan"]." ".$masehi["tahun"]." M";
    }
    else
@@ -113,7 +113,7 @@ function Masehi2Hijriah($masehitanggal, $masehibulan, $masehitahun, $flag=FLAG_O
    $th = [];
    $hb = [];
    $hijriah = ["tanggal" => 0, "bulan" => 0, "tahun" => 0];
-   $terbilangmasehi = $masehitanggal." ".namaBulanMasehi[$masehibulan]." ".$masehitahun." M";
+   $terbilangmasehi = $masehitanggal." ".namaBulanMasehi[(int) $masehibulan]." ".$masehitahun." M";
    //menghitung masehitanggal
    $masehitahun--;
    $masehibulan--;
@@ -139,7 +139,7 @@ function Masehi2Hijriah($masehitanggal, $masehibulan, $masehitahun, $flag=FLAG_O
    {
       $hijriah  = kurangTanggalHijriah($hijriah, $harikoreksi);
    }
-   $hijriah["namabulan"]              = namaBulanHijriah[$hijriah["bulan"]];
+   $hijriah["namabulan"]              = namaBulanHijriah[(int) $hijriah["bulan"]];
    $lanjut = !($metode == METODE_MUHAMMADIYAH && cekDiluarJangkauan($hijriah["tahun"], $hijriah["bulan"])) && !is_null($harikoreksi);
    if ($lanjut)
    {
