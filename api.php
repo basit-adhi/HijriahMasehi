@@ -1,12 +1,11 @@
 <?php
-//compress response
 if(!ob_start("ob_gzhandler")) ob_start();
-/** 
+/**
  * api.php
  * <br/> API hijriahmasehi
  * <br/> profil  https://id.linkedin.com/in/basitadhi
  * <br/> buat    2021-12-19
- * <br/> rev     2021-12-20
+ * <br/> rev     2021-12-23
  * <br/> sifat   open source
  * @author Basit Adhi Prabowo, S.T. <basit@unisayogya.ac.id>
  * @access public
@@ -26,12 +25,13 @@ const mtd = [ METODE_URFI, METODE_MUHAMMADIYAH ];
 switch ($fungsi)
 {
    case "help":
-      $ret = [ "fungsi"  => [ "help"           => "[url:api/help] menampilkan help", 
-                              "metode"         => "[url:api/metode] menampilkan metode yang didukung, yaitu ".implode(", ", mtd), 
-                              "koreksi"        => "[url:api/koreksi/<metode>/<tahun>] mengembalikan daftar koreksi pada <tahun> yang diminta", 
-                              "hijriah2masehi" => "[url:api/hijriah2masehi/<metode>/<tahun>/<bulan>/<tanggal>] mengembalikan tanggal masehi dari <tanggal>, <bulan> dan <tahun> hijriah yang diminta dengan <metode> yang dikehendaki",
-                              "masehi2hijriah" => "[url:api/masehi2hijriah/<metode>/<tahun>/<bulan>/<tanggal>] mengembalikan tanggal hijriah dari <tanggal>, <bulan> dan <tahun> masehi yang diminta dengan <metode> yang dikehendaki",
-                              "satuhijriah"    => "[url:api/satuhijriah/<metode>/<tahun>] mengembalikan daftar tanggal Masehi untuk setiap tanggal 1 hijriah dalam <tahun> Hijriah dengan <metode> yang dikehendaki"
+      $ret = [ "fungsi"  => [ "help"             => "[url:api/help] menampilkan help", 
+                              "metode"           => "[url:api/metode] menampilkan metode yang didukung, yaitu ".implode(", ", mtd), 
+                              "koreksi"          => "[url:api/koreksi/<metode>/<tahun>] mengembalikan daftar koreksi pada <tahun> yang diminta", 
+                              "hijriah2masehi"   => "[url:api/hijriah2masehi/<metode>/<tahun>/<bulan>/<tanggal>] mengembalikan tanggal masehi dari <tanggal>, <bulan> dan <tahun> hijriah yang diminta dengan <metode> yang dikehendaki",
+                              "masehi2hijriah"   => "[url:api/masehi2hijriah/<metode>/<tahun>/<bulan>/<tanggal>] mengembalikan tanggal hijriah dari <tanggal>, <bulan> dan <tahun> masehi yang diminta dengan <metode> yang dikehendaki",
+                              "satuhijriah"      => "[url:api/satuhijriah/<metode>/<tahun>] mengembalikan daftar tanggal Masehi untuk setiap tanggal 1 hijriah dalam <tahun> Hijriah dengan <metode> yang dikehendaki",
+                              "umurbulankoreksi" => "[url:api/umurbulankoreksi/muhammadiyah/<tahun>] mengembalikan daftar umur bulan dalam <tahun> Hijriah dengan metode muhammadiyah"
                             ],
                "metode"  => "metode yang digunakan",
                "tahun"   => "tahun yang diminta",
@@ -53,6 +53,9 @@ switch ($fungsi)
       break;
    case "satuhijriah":
       $ret = satuHijriah($tahun, FLAG_OUTPUT_ARRAY, $metode);
+      break;
+   case "umurbulankoreksi":
+      $ret = daftarUmurbulanKoreksi($tahun, FLAG_OUTPUT_ARRAY);
       break;
    default:
       $ret = ["err" => "Gunakan metode POST dengan body name:metode, value:help"];
