@@ -4,7 +4,7 @@
  * <br/> Converter Hijriah ke Masehi dan sebaliknya
  * <br/> profil  https://id.linkedin.com/in/basitadhi
  * <br/> buat    2021-12-19
- * <br/> rev     2021-12-20
+ * <br/> rev     2021-12-23
  * <br/> sifat   open source
  * @author Basit Adhi Prabowo, S.T. <basit@unisayogya.ac.id>
  * @access public
@@ -40,7 +40,13 @@ const koordinatJogja       = [ "lat" =>  -7.8, "long" =>  110.35 ]; //-7 48', 11
 **/
 function Hijriah2Masehi($hijritanggal, $hijribulan, $hijritahun, $flag=FLAG_OUTPUT_JSON, $metode=METODE_URFI)
 {
-   $lanjut = !($metode == METODE_MUHAMMADIYAH && cekDiluarJangkauan($hijritahun, $hijribulan));
+   //koreksi
+   if ($metode == METODE_MUHAMMADIYAH)
+   {
+      $harikoreksi = getKoreksi($hijritahun, $hijribulan);
+   }
+   $lanjut = !($metode == METODE_MUHAMMADIYAH && cekDiluarJangkauan($hijritahun, $hijribulan)) && !is_null($harikoreksi);
+   $terbilanghijriah = $hijritanggal." ".namaBulanHijriah[$hijribulan]." ".$hijritahun." H";
    if ($lanjut)
    {
       $tahunSisaDaurBULAN = 0;
@@ -50,12 +56,6 @@ function Hijriah2Masehi($hijritanggal, $hijribulan, $hijritahun, $flag=FLAG_OUTP
       $tahunmatahari = 0;
       $hb = [];
       $masehi = ["tanggal" => 0, "bulan" => 0, "tahun" => 1];
-      $terbilanghijriah = $hijritanggal." ".namaBulanHijriah[$hijribulan]." ".$hijritahun." H";
-      //koreksi
-      if ($metode == METODE_MUHAMMADIYAH)
-      {
-         $harikoreksi = getKoreksi($hijritahun, $hijribulan);
-      }
       //menghitung hijritahun
       $hijritahun--;
       $hijribulan--;
@@ -77,16 +77,22 @@ function Hijriah2Masehi($hijritanggal, $hijribulan, $hijritahun, $flag=FLAG_OUTP
       $masehi["tahun"]                  += floor($hariSisaDaurMATAHARI / 365); 
       $masehi["bulan"]                  = $hb["bulan"] + 1;
       $masehi["tanggal"]                = $hb["hari"];
-      $masehi["namabulan"]              = namaBulanMasehi[$masehi["bulan"]];
+      if ($masehi["tanggal"] <= 0)
+      {
+         $k                 = 1 - $masehi["tanggal"];
+         $masehi["tanggal"] = 1;
+         $masehi = intervalTanggal($masehi, -$k);
+      }
       if ($metode == METODE_MUHAMMADIYAH && $harikoreksi != 0)
       {
          $masehi = intervalTanggal($masehi, $harikoreksi);
       }
+      $masehi["namabulan"]              = namaBulanMasehi[$masehi["bulan"]];
       $masehi["terbilang"]              = $terbilanghijriah." | ".$masehi["tanggal"]." ".$masehi["namabulan"]." ".$masehi["tahun"]." M";
    }
    else
    {
-      $masehi = [ "tanggal" => 0, "bulan" => 0, "tahun" => 0, "namabulan" => "", "terbilang" => "Hijriah di luar jangkauan."];
+      $masehi = [ "tanggal" => 0, "bulan" => 0, "tahun" => 0, "namabulan" => "", "terbilang" => $terbilanghijriah." | -"];
    }
    return $flag == FLAG_OUTPUT_JSON ? json_encode($masehi) : $masehi;
 }
@@ -133,20 +139,27 @@ function Masehi2Hijriah($masehitanggal, $masehibulan, $masehitahun, $flag=FLAG_O
    {
       $hijriah  = kurangTanggalHijriah($hijriah, $harikoreksi);
    }
-   $hijriah["namabulan"]             = namaBulanHijriah[$hijriah["bulan"]];
-   $lanjut = !($metode == METODE_MUHAMMADIYAH && cekDiluarJangkauan($hijriah["tahun"], $hijriah["bulan"]));
+   $hijriah["namabulan"]              = namaBulanHijriah[$hijriah["bulan"]];
+   $lanjut = !($metode == METODE_MUHAMMADIYAH && cekDiluarJangkauan($hijriah["tahun"], $hijriah["bulan"])) && !is_null($harikoreksi);
    if ($lanjut)
    {
       $hijriah["terbilang"]  = $hijriah["tanggal"]." ".$hijriah["namabulan"]." ".$hijriah["tahun"]." H | ".$terbilangmasehi;
    }
    else
    {
-      $hijriah               = [ "tanggal" => 0, "bulan" => 0, "tahun" => 0, "terbilang" => "Hijriah di luar jangkauan."];
+      $hijriah               = [ "tanggal" => 0, "bulan" => 0, "tahun" => 0, "terbilang" => "- | ".$terbilangmasehi];
    }
    return $flag == FLAG_OUTPUT_JSON ? json_encode($hijriah) : $hijriah;
 }
 
-
+/**
+* fungsi untuk mengurang tanggal dengan interval <hari>
+* input:
+* tanggal adalah tanggal yang akan ditambahkan berupa senarai dengan indeks "tahun", "bulan", "tanggal", misal: [ "tahun" => 1970, "bulan" => 1, "tanggal" => 1 ]
+* hari adalah interval dalam hari, bisa bernilai positif maupun negatif
+* output:
+* tanggal baru berupa senarai dengan indeks "tahun", "bulan", "tanggal", misal: [ "tahun" => 1970, "bulan" => 1, "tanggal" => 1 ]
+*/
 function kurangTanggalHijriah($tanggal, $hari)
 {
    $tanggal["tanggal"] -= $hari;
