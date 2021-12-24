@@ -4,7 +4,7 @@
  * <br/> Converter Hijriah ke Masehi dan sebaliknya
  * <br/> profil  https://id.linkedin.com/in/basitadhi
  * <br/> buat    2021-12-19
- * <br/> rev     2021-12-23
+ * <br/> rev     2021-12-24
  * <br/> sifat   open source
  * @author Basit Adhi Prabowo, S.T. <basit@unisayogya.ac.id>
  * @access public
@@ -45,7 +45,7 @@ function Hijriah2Masehi($hijritanggal, $hijribulan, $hijritahun, $flag=FLAG_OUTP
    {
       $harikoreksi = getKoreksi($hijritahun, $hijribulan);
    }
-   $lanjut = !($metode == METODE_MUHAMMADIYAH && cekDiluarJangkauan($hijritahun, $hijribulan)) && !is_null($harikoreksi);
+   $lanjut = ($metode == METODE_MUHAMMADIYAH) ? !cekDiluarJangkauan($hijritahun, $hijribulan) && !is_null($harikoreksi) : true;
    $terbilanghijriah = $hijritanggal." ".namaBulanHijriah[(int) $hijribulan]." ".$hijritahun." H";
    if ($lanjut)
    {
@@ -140,7 +140,7 @@ function Masehi2Hijriah($masehitanggal, $masehibulan, $masehitahun, $flag=FLAG_O
       $hijriah  = kurangTanggalHijriah($hijriah, $harikoreksi);
    }
    $hijriah["namabulan"]              = namaBulanHijriah[(int) $hijriah["bulan"]];
-   $lanjut = !($metode == METODE_MUHAMMADIYAH && cekDiluarJangkauan($hijriah["tahun"], $hijriah["bulan"])) && !is_null($harikoreksi);
+   $lanjut = ($metode == METODE_MUHAMMADIYAH) ? !cekDiluarJangkauan($hijriah["tahun"], $hijriah["bulan"]) && !is_null($harikoreksi) : true;
    if ($lanjut)
    {
       $hijriah["terbilang"]  = $hijriah["tanggal"]." ".$hijriah["namabulan"]." ".$hijriah["tahun"]." H | ".$terbilangmasehi;
