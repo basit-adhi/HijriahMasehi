@@ -4,7 +4,7 @@
  * <br/> Converter Hijriah ke Masehi dan sebaliknya
  * <br/> profil  https://id.linkedin.com/in/basitadhi
  * <br/> buat    2021-12-19
- * <br/> rev     2021-12-24
+ * <br/> rev     2022-01-05
  * <br/> sifat   open source
  * @author Basit Adhi Prabowo, S.T. <basit@unisayogya.ac.id>
  * @access public
@@ -46,7 +46,8 @@ function Hijriah2Masehi($hijritanggal, $hijribulan, $hijritahun, $flag=FLAG_OUTP
       $harikoreksi = getKoreksi($hijritahun, $hijribulan);
    }
    $lanjut = ($metode == METODE_MUHAMMADIYAH) ? !cekDiluarJangkauan($hijritahun, $hijribulan) && !is_null($harikoreksi) : true;
-   $terbilanghijriah = $hijritanggal." ".namaBulanHijriah[(int) $hijribulan]." ".$hijritahun." H";
+   $terbilanghijriah        = $hijritanggal." ".namaBulanHijriah[(int) $hijribulan]." ".$hijritahun." H";
+   $terbilanghijriahsimpel  = $hijritanggal."/".$hijribulan."/".$hijritahun."H";
    if ($lanjut)
    {
       $tahunSisaDaurBULAN = 0;
@@ -89,10 +90,11 @@ function Hijriah2Masehi($hijritanggal, $hijribulan, $hijritahun, $flag=FLAG_OUTP
       }
       $masehi["namabulan"]              = namaBulanMasehi[(int) $masehi["bulan"]];
       $masehi["terbilang"]              = $terbilanghijriah." | ".$masehi["tanggal"]." ".$masehi["namabulan"]." ".$masehi["tahun"]." M";
+      $masehi["terbilangsimpel"]        = $terbilanghijriahsimpel." | ".$masehi["tanggal"]."/".$masehi["bulan"]."/".$masehi["tahun"]."M";
    }
    else
    {
-      $masehi = [ "tanggal" => 0, "bulan" => 0, "tahun" => 0, "namabulan" => "", "terbilang" => $terbilanghijriah." | -"];
+      $masehi = [ "tanggal" => 0, "bulan" => 0, "tahun" => 0, "namabulan" => "", "terbilang" => $terbilanghijriah." | -", "terbilangsimpel" => $terbilanghijriahsimpel." | -"];
    }
    return $flag == FLAG_OUTPUT_JSON ? json_encode($masehi) : $masehi;
 }
@@ -113,7 +115,8 @@ function Masehi2Hijriah($masehitanggal, $masehibulan, $masehitahun, $flag=FLAG_O
    $th = [];
    $hb = [];
    $hijriah = ["tanggal" => 0, "bulan" => 0, "tahun" => 0];
-   $terbilangmasehi = $masehitanggal." ".namaBulanMasehi[(int) $masehibulan]." ".$masehitahun." M";
+   $terbilangmasehi         = $masehitanggal." ".namaBulanMasehi[(int) $masehibulan]." ".$masehitahun." M";
+   $terbilangmasehisimpel   = $masehitanggal."/".$masehibulan."/".$masehitahun."M";
    //menghitung masehitanggal
    $masehitahun--;
    $masehibulan--;
@@ -143,11 +146,12 @@ function Masehi2Hijriah($masehitanggal, $masehibulan, $masehitahun, $flag=FLAG_O
    $lanjut = ($metode == METODE_MUHAMMADIYAH) ? !cekDiluarJangkauan($hijriah["tahun"], $hijriah["bulan"]) && !is_null($harikoreksi) : true;
    if ($lanjut)
    {
-      $hijriah["terbilang"]  = $hijriah["tanggal"]." ".$hijriah["namabulan"]." ".$hijriah["tahun"]." H | ".$terbilangmasehi;
+      $hijriah["terbilang"]         = $hijriah["tanggal"]." ".$hijriah["namabulan"]." ".$hijriah["tahun"]." H | ".$terbilangmasehi;
+      $hijriah["terbilangsimpel"]   = $hijriah["tanggal"]."/".$hijriah["bulan"]."/".$hijriah["tahun"]."H | ".$terbilangmasehisimpel;
    }
    else
    {
-      $hijriah               = [ "tanggal" => 0, "bulan" => 0, "tahun" => 0, "terbilang" => "- | ".$terbilangmasehi];
+      $hijriah               = [ "tanggal" => 0, "bulan" => 0, "tahun" => 0, "terbilang" => "- | ".$terbilangmasehi, "terbilangsimpel" => "- | ".$terbilangmasehisimpel];
    }
    return $flag == FLAG_OUTPUT_JSON ? json_encode($hijriah) : $hijriah;
 }
