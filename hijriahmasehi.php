@@ -148,6 +148,19 @@ function Masehi2Hijriah($masehitanggal, $masehibulan, $masehitahun, $flag=FLAG_O
    {
       $hijriah["terbilang"]         = $hijriah["tanggal"]." ".$hijriah["namabulan"]." ".$hijriah["tahun"]." H | ".$terbilangmasehi;
       $hijriah["terbilangsimpel"]   = $hijriah["tanggal"]."/".$hijriah["bulan"]."/".$hijriah["tahun"]."H | ".$terbilangmasehisimpel;
+      $terbilangbakdamaghrib        = $hijriah;
+      $terbilangbakdamaghrib["tanggal"]++;
+      global $umurbulan;
+      if ($terbilangbakdamaghrib["tanggal"] > $umurbulan[$terbilangbakdamaghrib["tahun"]][$terbilangbakdamaghrib["bulan"]])
+      {
+          $terbilangbakdamaghrib["bulan"]++;
+          if ($terbilangbakdamaghrib["bulan"] > 12)
+          {
+              $terbilangbakdamaghrib["bulan"] = 1;
+              $terbilangbakdamaghrib["tahun"]++;
+          }
+      }
+      $hijriah["terbilangbakdamaghrib"] = $terbilangbakdamaghrib["tanggal"]." ".namaBulanHijriah[(int) $terbilangbakdamaghrib["bulan"]]." ".$terbilangbakdamaghrib["tahun"]." H | ".$terbilangmasehi;
    }
    else
    {
