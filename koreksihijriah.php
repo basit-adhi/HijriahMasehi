@@ -15,7 +15,7 @@
 * penting untuk menggunakan variabel untuk menghemat resource penghitungan
 * cara mengisi koreksi
 * Alternatif 1 [Manual dengan Kalender Muhammadiyah]:
-* 1. Sediakan kalender dengan perhitungan Muhammadiyah pada, bisa yang berbasis Masehi atau Hijriah
+* 1. Sediakan kalender dengan perhitungan Muhammadiyah, bisa yang berbasis Masehi atau Hijriah
 * 2. Jalankan service di bawah ini sesuai dengan tahun Hijriahnya
 *    https://service.unisayogya.ac.id/kalender/api/satuhijriah/urfi/<tahun_hijriah>
 * 3. Catat selisih tanggal Masehi Muhammadiyah - tanggal Masehi Urfi ke dalam variabel $koreksi[<tahun_hijriah>]
