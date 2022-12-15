@@ -20,6 +20,8 @@
 *    https://service.unisayogya.ac.id/kalender/api/satuhijriah/urfi/<tahun_hijriah>
 * 3. Catat selisih tanggal Masehi Muhammadiyah - tanggal Masehi Urfi ke dalam variabel $koreksi[<tahun_hijriah>]
 *    misalnya: tanggal Masehi Muhammadiyah: 25 Feb 2020, tanggal Masehi Urfi 24 Feb 2020, maka selisihnya adalah 1
+* 4. Cocokkkan kalender dengan menjalankan service di bawah ini sesuai dengan tahun Hijriahnya
+*    https://service.unisayogya.ac.id/kalender/api/satuhijriah/muhammadiyah/<tahun_hijriah> 
 * Alternatif 2 [Otomatis dengan rumus]
 * TODO
 */
@@ -35,7 +37,8 @@ $koreksi[1440] = [1 => 0,   -1,    0,    0,    0,    0,    1,    0,    1,    1, 
 $koreksi[1441] = [1 => 1,    0,    0,    0,    0,    0,    1,   -1,    0,    0,    0,    0   ];
 $koreksi[1442] = [1 => 0,    0,    0,    0,    0,    0,    1,    0,    1,    1,    2,    1   ];
 $koreksi[1443] = [1 => 1,    0,    1,    0,    0,    0,    0,    0,    0,    0,    1,    0   ];
-$koreksi[1444] = [1 => 1,    0,    1,    1,    1,    1,    null, null, null, null, null, null];
+$koreksi[1444] = [1 => 1,    0,    1,    1,    1,    1,    1,    0,    1,    0,    1,    0   ];
+$koreksi[1445] = [1 => 1,    0,    1,    1,    2,    1, null, null, null, null, null, null   ];
 
 /*
 * umurbulan adalah berapa hari dalam bulan tersebut (Hijriah)
@@ -57,7 +60,8 @@ $umurbulan[1440] = [1 => 29,   30,   30,   29,   30,   30,   29,   30,   30,   2
 $umurbulan[1441] = [1 => 29,   29,   30,   29,   30,   30,   29,   30,   30,   29,   30,   29];
 $umurbulan[1442] = [1 => 30,   29,   30,   29,   29,   30,   29,   30,   30,   30,   29,   30];
 $umurbulan[1443] = [1 => 29,   30,   29,   29,   30,   29,   30,   29,   30,   30,   29,   30];
-$umurbulan[1444] = [1 => 29,   30,   30,   29,   30,   null, null, null, null, null, null, null];
+$umurbulan[1444] = [1 => 29,   30,   30,   29,   30,   29,   29,   30,   29,   30,   29,   30];
+$umurbulan[1444] = [1 => 29,   30,   30,   30,   29,   null, null, null, null, null, null, null];
 
 /**
 * mengembalikan koreksi tanggal pada <bulan> <tahun>
