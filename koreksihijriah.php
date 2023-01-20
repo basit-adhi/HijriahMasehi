@@ -61,7 +61,7 @@ $umurbulan[1441] = [1 => 29,   29,   30,   29,   30,   30,   29,   30,   30,   2
 $umurbulan[1442] = [1 => 30,   29,   30,   29,   29,   30,   29,   30,   30,   30,   29,   30];
 $umurbulan[1443] = [1 => 29,   30,   29,   29,   30,   29,   30,   29,   30,   30,   29,   30];
 $umurbulan[1444] = [1 => 29,   30,   30,   29,   30,   29,   29,   30,   29,   30,   29,   30];
-$umurbulan[1444] = [1 => 29,   30,   30,   30,   29,   null, null, null, null, null, null, null];
+$umurbulan[1445] = [1 => 29,   30,   30,   30,   29,   null, null, null, null, null, null, null];
 
 /**
 * mengembalikan koreksi tanggal pada <bulan> <tahun>
