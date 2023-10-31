@@ -24,6 +24,7 @@
 *    https://service.unisayogya.ac.id/kalender/api/satuhijriah/muhammadiyah/<tahun_hijriah> 
 * Alternatif 2 [Otomatis dengan rumus]
 * TODO
+* https://github.com/cosinekitty/astronomy/blob/master/source/js/astronomy.browser.js
 */
 $koreksi = [];
      /* bulan ke-      1     2     3     4     5     6     7     8     9     10    11    12  */
