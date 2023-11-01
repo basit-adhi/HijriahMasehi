@@ -25,6 +25,7 @@
 * Alternatif 2 [Otomatis dengan rumus]
 * TODO
 * https://github.com/cosinekitty/astronomy/blob/master/source/js/astronomy.browser.js
+* http://praytimes.org/code/git/?a=viewblob&p=PrayTimes&h=ab1c60335ec59683f2097d1876172b1dd784e36d&hb=17ee68cff3d814bae3fcf7dc55beaf3e49909889&f=v2/js/PrayTimes.js
 */
 $koreksi = [];
      /* bulan ke-      1     2     3     4     5     6     7     8     9     10    11    12  */
