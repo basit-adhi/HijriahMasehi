@@ -9,6 +9,10 @@
  * @author Basit Adhi Prabowo, S.T. <basit@unisayogya.ac.id>
  * @access public
  */
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+error_reporting(E_ERROR);
 
 require_once("koreksihijriah.php");
 
@@ -108,13 +112,18 @@ function Hijriah2Masehi($hijritanggal, $hijribulan, $hijritahun, $flag=FLAG_OUTP
 * output:
 * penanggalan hijriah (JSON), misal: {"tanggal":29,"bulan":8,"tahun":1429}
 **/
-function Masehi2Hijriah($masehitanggal, $masehibulan, $masehitahun, $flag=FLAG_OUTPUT_JSON, $metode=METODE_URFI)
+function Masehi2Hijriah($masehitanggal, $masehibulan, $masehitahun, $flag=FLAG_OUTPUT_JSON, $metode=METODE_URFI, $denganMaghrib=true)
 {
    $hariMATAHARI = [ "haritanggal" => 0, "haribulan" => 0, "tahunkabisat" => 0, "sisatahunkabisat" => 0, "koreksidanselisih" =>  -selisihMasehiHijriah -koreksiPausG13 ];
    $totalHariMasehi = 0;
    $th = [];
    $hb = [];
    $hijriah = ["tanggal" => 0, "bulan" => 0, "tahun" => 0];
+   if ($denganMaghrib)
+   {
+      $nextDay      = intervalTanggal(["tanggal" => $masehitanggal, "bulan" => $masehibulan, "tahun" => $masehitahun], 1);
+      $bakdamaghrib = Masehi2Hijriah($nextDay["tanggal"], $nextDay["bulan"], $nextDay["tahun"], FLAG_OUTPUT_ARRAY, $metode, false); 
+   }
    $terbilangmasehi         = $masehitanggal." ".namaBulanMasehi[(int) $masehibulan]." ".$masehitahun." M";
    $terbilangmasehisimpel   = $masehitanggal."/".$masehibulan."/".$masehitahun."M";
    //menghitung masehitanggal
@@ -148,19 +157,10 @@ function Masehi2Hijriah($masehitanggal, $masehibulan, $masehitahun, $flag=FLAG_O
    {
       $hijriah["terbilang"]         = $hijriah["tanggal"]." ".$hijriah["namabulan"]." ".$hijriah["tahun"]." H | ".$terbilangmasehi;
       $hijriah["terbilangsimpel"]   = $hijriah["tanggal"]."/".$hijriah["bulan"]."/".$hijriah["tahun"]."H | ".$terbilangmasehisimpel;
-      $terbilangbakdamaghrib        = $hijriah;
-      $terbilangbakdamaghrib["tanggal"]++;
-      global $umurbulan;
-      if ($terbilangbakdamaghrib["tanggal"] > $umurbulan[$terbilangbakdamaghrib["tahun"]][$terbilangbakdamaghrib["bulan"]])
+      if ($denganMaghrib)
       {
-          $terbilangbakdamaghrib["bulan"]++;
-          if ($terbilangbakdamaghrib["bulan"] > 12)
-          {
-              $terbilangbakdamaghrib["bulan"] = 1;
-              $terbilangbakdamaghrib["tahun"]++;
-          }
+          $hijriah["terbilangbakdamaghrib"] = $bakdamaghrib["terbilang"];
       }
-      $hijriah["terbilangbakdamaghrib"] = $terbilangbakdamaghrib["tanggal"]." ".namaBulanHijriah[(int) $terbilangbakdamaghrib["bulan"]]." ".$terbilangbakdamaghrib["tahun"]." H | ".$terbilangmasehi;
    }
    else
    {

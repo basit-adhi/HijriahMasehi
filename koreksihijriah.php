@@ -24,9 +24,7 @@
 *    https://service.unisayogya.ac.id/kalender/api/satuhijriah/muhammadiyah/<tahun_hijriah> 
 * Alternatif 2 [Otomatis dengan rumus]
 * TODO
-* https://falakmu.id/
 * https://github.com/cosinekitty/astronomy/blob/master/source/js/astronomy.browser.js
-* http://praytimes.org/code/git/?a=viewblob&p=PrayTimes&h=ab1c60335ec59683f2097d1876172b1dd784e36d&hb=17ee68cff3d814bae3fcf7dc55beaf3e49909889&f=v2/js/PrayTimes.js
 */
 $koreksi = [];
      /* bulan ke-      1     2     3     4     5     6     7     8     9     10    11    12  */
@@ -41,7 +39,9 @@ $koreksi[1441] = [1 => 1,    0,    0,    0,    0,    0,    1,   -1,    0,    0, 
 $koreksi[1442] = [1 => 0,    0,    0,    0,    0,    0,    1,    0,    1,    1,    2,    1   ];
 $koreksi[1443] = [1 => 1,    0,    1,    0,    0,    0,    0,    0,    0,    0,    1,    0   ];
 $koreksi[1444] = [1 => 1,    0,    1,    1,    1,    1,    1,    0,    1,    0,    1,    0   ];
-$koreksi[1445] = [1 => 1,    0,    1,    1,    2,    1, null, null, null, null, null, null   ];
+$koreksi[1445] = [1 => 1,    0,    1,    1,    2,    1,    2,    1,    1,    0,    0,    0   ];
+$koreksi[1446] = [1 =>-1,   -1,   -1,   -1,    0,   -1,    1,    1,    1,    0,    1,    0   ];
+$koreksi[1447] = [1 => 0,    0,    0,    0,    1,    0,    1,    null,    null,    null,    null,    null   ];
 
 /*
 * umurbulan adalah berapa hari dalam bulan tersebut (Hijriah)
@@ -64,7 +64,9 @@ $umurbulan[1441] = [1 => 29,   29,   30,   29,   30,   30,   29,   30,   30,   2
 $umurbulan[1442] = [1 => 30,   29,   30,   29,   29,   30,   29,   30,   30,   30,   29,   30];
 $umurbulan[1443] = [1 => 29,   30,   29,   29,   30,   29,   30,   29,   30,   30,   29,   30];
 $umurbulan[1444] = [1 => 29,   30,   30,   29,   30,   29,   29,   30,   29,   30,   29,   30];
-$umurbulan[1445] = [1 => 29,   30,   30,   30,   29,   null, null, null, null, null, null, null];
+$umurbulan[1445] = [1 => 29,   30,   30,   30,   29,   30,   29,   29,   30,   29,   30,   29];
+$umurbulan[1446] = [1 => 30,   29,   30,   30,   29,   30,   30,   29,   29,   30,   29,   29];
+$umurbulan[1447] = [1 => 30,   29,   30,   30,   29,   30,   null,   null,   null,   null,   null,   null];
 
 /**
 * mengembalikan koreksi tanggal pada <bulan> <tahun>
